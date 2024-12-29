@@ -1,5 +1,9 @@
 <script >
 document.addEventListener('DOMContentLoaded', function() {
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.overflow = 'hidden';
+
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -21,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target.files && event.target.files[0]) {
             const img = document.createElement('img');
             img.src = URL.createObjectURL(event.target.files[0]);
+            img.style.width = '100vw';
+            img.style.height = '100vh';
+            img.style.objectFit = 'contain';
             img.onload = function() {
                 URL.revokeObjectURL(img.src);
             }
