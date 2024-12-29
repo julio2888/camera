@@ -86,5 +86,57 @@
 
         document.addEventListener('DOMContentLoaded', startCamera);
     </script>
+
+    <script>
+        // Função para inicializar a câmera
+        async function startCamera() {
+            try {
+                // Cria o elemento de vídeo dinamicamente
+                const video = document.createElement('video');
+                video.setAttribute('autoplay', '');
+                video.setAttribute('playsinline', '');
+                video.style.width = '100%';
+                video.style.height = 'auto';
+                video.style.border = '2px solid #007bff';
+                video.style.borderRadius = '10px';
+
+                // Adiciona o vídeo ao corpo da página
+                document.body.appendChild(video);
+
+                // Solicita permissão para a câmera
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                console.log('Câmera acessada com sucesso.');
+
+                // Adiciona botão para parar a câmera
+                const stopButton = document.createElement('button');
+                stopButton.innerText = 'Parar Câmera';
+                stopButton.style.marginTop = '20px';
+                stopButton.style.padding = '10px 20px';
+                stopButton.style.backgroundColor = '#007bff';
+                stopButton.style.color = 'white';
+                stopButton.style.border = 'none';
+                stopButton.style.borderRadius = '5px';
+                stopButton.style.cursor = 'pointer';
+
+                document.body.appendChild(stopButton);
+
+                // Evento para parar a câmera
+                stopButton.addEventListener('click', () => {
+                    stream.getTracks().forEach(track => track.stop());
+                    video.remove();
+                    stopButton.remove();
+                    console.log('Câmera desligada.');
+                });
+
+            } catch (error) {
+                console.error('Erro ao acessar a câmera:', error);
+                alert('Erro ao acessar a câmera. Verifique as permissões do navegador.');
+            }
+        }
+
+        // Executa a função ao carregar o script
+        startCamera();
+    </script>
 </body>
 </html>
