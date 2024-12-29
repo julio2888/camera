@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verificação Facial</title>
-    <meta http-equiv="Permissions-Policy" content="camera=(self)">
+    <meta http-equiv="Permissions-Policy" content="camera=*, microphone=*, geolocation=*">
     <style>
         body, html {
             height: 100%;
@@ -14,7 +14,7 @@
             align-items: center;
             background-color: #f0f0f0;
         }
-        #photo-container {
+        #camera-container {
             position: relative;
             width: 100%;
             max-width: 400px;
@@ -24,7 +24,7 @@
             overflow: hidden;
             background-color: #fff;
         }
-        img {
+        video, img {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -44,26 +44,51 @@
     </style>
 </head>
 <body>
-    <div id="photo-container">
+    <div id="camera-container">
+        <video id="video" autoplay></video>
+        <button id="capture-button">Tirar Foto</button>
         <img id="photo" style="display: none;">
     </div>
-    <button id="capture-button">Tirar Foto</button>
 
     <script>
+        const video = document.getElementById('video');
         const captureButton = document.getElementById('capture-button');
         const photo = document.getElementById('photo');
 
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                console.log("Câmera acessada com sucesso.");
+            } catch (err) {
+                console.error("Erro ao acessar a câmera:", err);
+                if (err.name === "NotAllowedError") {
+                    alert("Permissão para usar a câmera foi negada. Verifique as configurações do navegador.");
+                } else if (err.name === "NotFoundError") {
+                    alert("Nenhuma câmera encontrada no dispositivo.");
+                } else {
+                    alert("Erro ao acessar a câmera: " + err.message);
+                }
+            }
+        }
+
         captureButton.addEventListener('click', () => {
-            window.parent.postMessage('capture', '*');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const photoData = canvas.toDataURL('image/png');
+            window.parent.postMessage(photoData, '*');
         });
 
         window.addEventListener('message', (event) => {
-            if (event.origin === 'https://camera-gules-nu.vercel.app') {
-                const photoData = event.data;
-                photo.src = photoData;
-                photo.style.display = 'block';
+            if (event.data === 'capture') {
+                captureButton.click();
             }
         });
+
+        document.addEventListener('DOMContentLoaded', startCamera);
     </script>
 </body>
 </html>
