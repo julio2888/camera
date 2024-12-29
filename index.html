@@ -73,14 +73,20 @@
         }
 
         captureButton.addEventListener('click', () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const photoData = canvas.toDataURL('image/png');
-    window.parent.postMessage(photoData, '*');
-});
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const photoData = canvas.toDataURL('image/png');
+            window.parent.postMessage(photoData, '*');
+        });
+
+        window.addEventListener('message', (event) => {
+            if (event.data === 'capture') {
+                captureButton.click();
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', startCamera);
     </script>
