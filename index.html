@@ -1,142 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificação Facial</title>
-    <meta http-equiv="Permissions-Policy" content="camera=*, microphone=*, geolocation=*">
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0;
-        }
-        #camera-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 300px;
-            border: 2px solid #000;
-            border-radius: 10px;
-            overflow: hidden;
-            background-color: #fff;
-        }
-        video, img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        #capture-button {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <div id="camera-container">
-        <video id="video" autoplay></video>
-        <button id="capture-button">Tirar Foto</button>
-        <img id="photo" style="display: none;">
-    </div>
+<script >
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'user';
+    input.id = 'userCamera';
+    document.body.appendChild(input);
 
-    <script>
-    const video = document.getElementById('video');
-    const captureButton = document.getElementById('capture-button');
-    const photo = document.getElementById('photo');
+    const button = document.createElement('button');
+    button.id = 'openCameraButton';
+    button.innerText = 'Open Front Camera';
+    document.body.appendChild(button);
 
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                console.log("Câmera acessada com sucesso.");
-            } catch (err) {
-                console.error("Erro ao acessar a câmera:", err);
-                if (err.name === "NotAllowedError") {
-                    alert("Permissão para usar a câmera foi negada. Verifique as configurações do navegador.");
-                } else if (err.name === "NotFoundError") {
-                    alert("Nenhuma câmera encontrada no dispositivo.");
-                } else {
-                    alert("Erro ao acessar a câmera: " + err.message);
-                }
-            }
-        }
-
-        captureButton.addEventListener('click', () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            photo.src = canvas.toDataURL('image/png');
-            photo.style.display = 'block';
-            video.style.display = 'none';
-            captureButton.style.display = 'none';
-        });
-
-        document.addEventListener('DOMContentLoaded', startCamera);
-    </script>
-
-    <script>
-        // Função para inicializar a câmera
-        async function startCamera() {
-            try {
-                // Cria o elemento de vídeo dinamicamente
-                const video = document.createElement('video');
-                video.setAttribute('autoplay', '');
-                video.setAttribute('playsinline', '');
-                video.style.width = '100%';
-                video.style.height = 'auto';
-                video.style.border = '2px solid #007bff';
-                video.style.borderRadius = '10px';
-
-                // Adiciona o vídeo ao corpo da página
-                document.body.appendChild(video);
-
-                // Solicita permissão para a câmera
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                console.log('Câmera acessada com sucesso.');
-
-                // Adiciona botão para parar a câmera
-                const stopButton = document.createElement('button');
-                stopButton.innerText = 'Parar Câmera';
-                stopButton.style.marginTop = '20px';
-                stopButton.style.padding = '10px 20px';
-                stopButton.style.backgroundColor = '#007bff';
-                stopButton.style.color = 'white';
-                stopButton.style.border = 'none';
-                stopButton.style.borderRadius = '5px';
-                stopButton.style.cursor = 'pointer';
-
-                document.body.appendChild(stopButton);
-
-                // Evento para parar a câmera
-                stopButton.addEventListener('click', () => {
-                    stream.getTracks().forEach(track => track.stop());
-                    video.remove();
-                    stopButton.remove();
-                    console.log('Câmera desligada.');
-                });
-
-            } catch (error) {
-                console.error('Erro ao acessar a câmera:', error);
-                alert('Erro ao acessar a câmera. Verifique as permissões do navegador.');
-            }
-        }
-
-        // Executa a função ao carregar o script
-        startCamera();
-    </script>
-</body>
-</html>
+    document.getElementById('openCameraButton').addEventListener('click', function() {
+        document.getElementById('userCamera').click();
+    });
+});</script>
