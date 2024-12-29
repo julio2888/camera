@@ -51,32 +51,36 @@
     </div>
 
     <script>
-        const video = document.getElementById('video');
-        const captureButton = document.getElementById('capture-button');
-        const photo = document.getElementById('photo');
+    const video = document.getElementById('video');
+    const captureButton = document.getElementById('capture-button');
+    const photo = document.getElementById('photo');
 
-        captureButton.addEventListener('click', () => {
-            // Solicitar acesso à câmera
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-                    video.srcObject = stream;
-                })
-                .catch(err => {
-                    console.error("Erro ao acessar a câmera: ", err);
-                });
-        });
+    async function startCamera() {
+        try {
+            // Solicita permissão de acesso à câmera
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+        } catch (err) {
+            console.error("Erro ao acessar a câmera:", err);
+            alert("Permissão para usar a câmera foi negada ou não está disponível.");
+        }
+    }
 
-        captureButton.addEventListener('click', () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            photo.src = canvas.toDataURL('image/png');
-            photo.style.display = 'block';
-            video.style.display = 'none';
-            captureButton.style.display = 'none';
-        });
-    </script>
+    captureButton.addEventListener('click', () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        photo.src = canvas.toDataURL('image/png');
+        photo.style.display = 'block';
+        video.style.display = 'none';
+        captureButton.style.display = 'none';
+    });
+
+    // Inicia a câmera automaticamente ao carregar a página
+    document.addEventListener('DOMContentLoaded', startCamera);
+</script>
+
 </body>
 </html>
