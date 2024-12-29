@@ -60,9 +60,16 @@
             // Solicita permissão de acesso à câmera
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             video.srcObject = stream;
+            console.log("Câmera acessada com sucesso.");
         } catch (err) {
             console.error("Erro ao acessar a câmera:", err);
-            alert("Permissão para usar a câmera foi negada ou não está disponível.");
+            if (err.name === "NotAllowedError") {
+                alert("Permissão para usar a câmera foi negada. Verifique as configurações do navegador.");
+            } else if (err.name === "NotFoundError") {
+                alert("Nenhuma câmera encontrada no dispositivo.");
+            } else {
+                alert("Erro ao acessar a câmera: " + err.message);
+            }
         }
     }
 
@@ -78,9 +85,10 @@
         captureButton.style.display = 'none';
     });
 
-    // Inicia a câmera automaticamente ao carregar a página
     document.addEventListener('DOMContentLoaded', startCamera);
 </script>
+
+
 
 </body>
 </html>
