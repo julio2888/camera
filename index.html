@@ -51,9 +51,9 @@
     </div>
 
     <script>
-        const video = document.getElementById('video');
-        const captureButton = document.getElementById('capture-button');
-        const photo = document.getElementById('photo');
+    const video = document.getElementById('video');
+    const captureButton = document.getElementById('capture-button');
+    const photo = document.getElementById('photo');
 
         async function startCamera() {
             try {
@@ -78,14 +78,10 @@
             canvas.height = video.videoHeight;
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const photoData = canvas.toDataURL('image/png');
-            window.parent.postMessage(photoData, '*');
-        });
-
-        window.addEventListener('message', (event) => {
-            if (event.data === 'capture') {
-                captureButton.click();
-            }
+            photo.src = canvas.toDataURL('image/png');
+            photo.style.display = 'block';
+            video.style.display = 'none';
+            captureButton.style.display = 'none';
         });
 
         document.addEventListener('DOMContentLoaded', startCamera);
