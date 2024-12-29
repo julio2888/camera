@@ -1,142 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificação Facial</title>
-    <meta http-equiv="Permissions-Policy" content="camera=*, microphone=*, geolocation=*">
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0;
-        }
-        #camera-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 300px;
-            border: 2px solid #000;
-            border-radius: 10px;
-            overflow: hidden;
-            background-color: #fff;
-        }
-        video, img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        #capture-button {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <div id="camera-container">
-        <video id="video" autoplay></video>
-        <button id="capture-button">Tirar Foto</button>
-        <img id="photo" style="display: none;">
-    </div>
+<script>
+  async function startCamera() {
+    try {
+      // Cria o contêiner para o vídeo
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.alignItems = 'center';
+      container.style.justifyContent = 'center';
+      container.style.height = '100vh';
+      container.style.backgroundColor = '#f0f0f0';
 
-    <script>
-    const video = document.getElementById('video');
-    const captureButton = document.getElementById('capture-button');
-    const photo = document.getElementById('photo');
+      // Cria o elemento de vídeo
+      const video = document.createElement('video');
+      video.setAttribute('autoplay', '');
+      video.setAttribute('playsinline', '');
+      video.style.width = '100%';
+      video.style.maxWidth = '600px';
+      video.style.border = '2px solid #007bff';
+      video.style.borderRadius = '10px';
 
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                console.log("Câmera acessada com sucesso.");
-            } catch (err) {
-                console.error("Erro ao acessar a câmera:", err);
-                if (err.name === "NotAllowedError") {
-                    alert("Permissão para usar a câmera foi negada. Verifique as configurações do navegador.");
-                } else if (err.name === "NotFoundError") {
-                    alert("Nenhuma câmera encontrada no dispositivo.");
-                } else {
-                    alert("Erro ao acessar a câmera: " + err.message);
-                }
-            }
-        }
+      // Cria o botão de capturar
+      const captureButton = document.createElement('button');
+      captureButton.innerText = 'Tirar Foto';
+      captureButton.style.marginTop = '20px';
+      captureButton.style.padding = '10px 20px';
+      captureButton.style.backgroundColor = '#007bff';
+      captureButton.style.color = 'white';
+      captureButton.style.border = 'none';
+      captureButton.style.borderRadius = '5px';
+      captureButton.style.cursor = 'pointer';
 
-        captureButton.addEventListener('click', () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            photo.src = canvas.toDataURL('image/png');
-            photo.style.display = 'block';
-            video.style.display = 'none';
-            captureButton.style.display = 'none';
+      // Adiciona o vídeo e o botão ao contêiner
+      container.appendChild(video);
+      container.appendChild(captureButton);
+
+      // Adiciona o contêiner ao body
+      document.body.innerHTML = ''; // Remove qualquer conteúdo existente
+      document.body.appendChild(container);
+
+      // Solicita permissão para usar a câmera
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+
+      // Função de captura de imagem
+      captureButton.addEventListener('click', () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Exibe a foto capturada
+        const photo = new Image();
+        photo.src = canvas.toDataURL('image/png');
+        photo.style.width = '100%';
+        photo.style.maxWidth = '600px';
+        photo.style.border = '2px solid #28a745';
+        photo.style.borderRadius = '10px';
+
+        // Substitui o vídeo pela foto
+        video.remove();
+        container.insertBefore(photo, captureButton);
+
+        // Adiciona botões de enviar e tentar novamente
+        captureButton.remove();
+        const retryButton = document.createElement('button');
+        retryButton.innerText = 'Tentar Novamente';
+        retryButton.style.marginTop = '20px';
+        retryButton.style.padding = '10px 20px';
+        retryButton.style.backgroundColor = '#ffc107';
+        retryButton.style.color = '#000';
+        retryButton.style.border = 'none';
+        retryButton.style.borderRadius = '5px';
+        retryButton.style.cursor = 'pointer';
+
+        const sendButton = document.createElement('button');
+        sendButton.innerText = 'Enviar Foto';
+        sendButton.style.marginTop = '10px';
+        sendButton.style.padding = '10px 20px';
+        sendButton.style.backgroundColor = '#28a745';
+        sendButton.style.color = 'white';
+        sendButton.style.border = 'none';
+        sendButton.style.borderRadius = '5px';
+        sendButton.style.cursor = 'pointer';
+
+        container.appendChild(retryButton);
+        container.appendChild(sendButton);
+
+        // Evento de tentar novamente
+        retryButton.addEventListener('click', () => {
+          photo.remove();
+          retryButton.remove();
+          sendButton.remove();
+          container.appendChild(video);
+          container.appendChild(captureButton);
         });
 
-        document.addEventListener('DOMContentLoaded', startCamera);
-    </script>
+        // Evento de enviar (simulado)
+        sendButton.addEventListener('click', () => {
+          alert('Foto enviada com sucesso!');
+          console.log(photo.src); // A URL da imagem capturada
+        });
+      });
 
-    <script>
-        // Função para inicializar a câmera
-        async function startCamera() {
-            try {
-                // Cria o elemento de vídeo dinamicamente
-                const video = document.createElement('video');
-                video.setAttribute('autoplay', '');
-                video.setAttribute('playsinline', '');
-                video.style.width = '100%';
-                video.style.height = 'auto';
-                video.style.border = '2px solid #007bff';
-                video.style.borderRadius = '10px';
+    } catch (error) {
+      console.error('Erro ao acessar a câmera:', error);
+      document.body.innerHTML = '<h1>Erro ao acessar a câmera. Verifique as permissões do navegador.</h1>';
+    }
+  }
 
-                // Adiciona o vídeo ao corpo da página
-                document.body.appendChild(video);
-
-                // Solicita permissão para a câmera
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                console.log('Câmera acessada com sucesso.');
-
-                // Adiciona botão para parar a câmera
-                const stopButton = document.createElement('button');
-                stopButton.innerText = 'Parar Câmera';
-                stopButton.style.marginTop = '20px';
-                stopButton.style.padding = '10px 20px';
-                stopButton.style.backgroundColor = '#007bff';
-                stopButton.style.color = 'white';
-                stopButton.style.border = 'none';
-                stopButton.style.borderRadius = '5px';
-                stopButton.style.cursor = 'pointer';
-
-                document.body.appendChild(stopButton);
-
-                // Evento para parar a câmera
-                stopButton.addEventListener('click', () => {
-                    stream.getTracks().forEach(track => track.stop());
-                    video.remove();
-                    stopButton.remove();
-                    console.log('Câmera desligada.');
-                });
-
-            } catch (error) {
-                console.error('Erro ao acessar a câmera:', error);
-                alert('Erro ao acessar a câmera. Verifique as permissões do navegador.');
-            }
-        }
-
-        // Executa a função ao carregar o script
-        startCamera();
-    </script>
-</body>
-</html>
+  // Executa a função ao carregar o script
+  startCamera();
+</script>
