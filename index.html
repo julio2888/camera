@@ -1,8 +1,12 @@
-<script >
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     document.body.style.margin = '0';
     document.body.style.padding = '0';
     document.body.style.overflow = 'hidden';
+    document.body.style.display = 'flex';
+    document.body.style.justifyContent = 'center';
+    document.body.style.alignItems = 'center';
+    document.body.style.height = '100vh';
 
     const input = document.createElement('input');
     input.type = 'file';
@@ -33,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const img = document.createElement('img');
             img.src = URL.createObjectURL(event.target.files[0]);
             img.style.width = '100%';
-            img.style.height = '100vh';
+            img.style.height = '100%';
             img.style.objectFit = 'contain';
             img.onload = function() {
                 URL.revokeObjectURL(img.src);
@@ -42,4 +46,5 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.appendChild(img);
         }
     });
-});</script>
+});
+</script>
