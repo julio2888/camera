@@ -15,6 +15,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const button = document.createElement('button');
     button.id = 'openCameraButton';
     button.innerText = 'Open Front Camera';
+    button.style.backgroundColor = 'blue';
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.padding = '10px 20px';
+    button.style.fontSize = '16px';
+    button.style.cursor = 'pointer';
+    button.style.borderRadius = '5px';
     document.body.appendChild(button);
 
     document.getElementById('openCameraButton').addEventListener('click', function() {
@@ -25,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target.files && event.target.files[0]) {
             const img = document.createElement('img');
             img.src = URL.createObjectURL(event.target.files[0]);
-            img.style.width = '100vw';
+            img.style.width = '100%';
             img.style.height = '100vh';
             img.style.objectFit = 'contain';
             img.onload = function() {
