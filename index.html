@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     input.accept = 'image/*';
     input.capture = 'user';
     input.id = 'userCamera';
+    input.style.display = 'none';
     document.body.appendChild(input);
 
     const button = document.createElement('button');
@@ -14,5 +15,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('openCameraButton').addEventListener('click', function() {
         document.getElementById('userCamera').click();
+    });
+
+    input.addEventListener('change', function(event) {
+        if (event.target.files && event.target.files[0]) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(event.target.files[0]);
+            img.onload = function() {
+                URL.revokeObjectURL(img.src);
+            }
+            document.body.innerHTML = '';
+            document.body.appendChild(img);
+        }
     });
 });</script>
