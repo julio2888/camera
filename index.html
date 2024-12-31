@@ -44,6 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             document.body.innerHTML = '';
             document.body.appendChild(img);
+
+            // Emitir evento após carregar a foto
+            window.Typebot.postMessage();
         }
     });
 });
