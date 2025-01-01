@@ -1,5 +1,5 @@
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Configurar estilos básicos
     document.body.style.margin = '0';
     document.body.style.padding = '0';
@@ -31,35 +31,40 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.appendChild(button);
 
     // Ação ao clicar no botão
-    document.getElementById('openCameraButton').addEventListener('click', function() {
+    document.getElementById('openCameraButton').addEventListener('click', function () {
         document.getElementById('userCamera').click();
     });
 
-
     // Evento ao selecionar uma foto
-   input.addEventListener('change', function(event) {
-    if (event.target.files && event.target.files[0]) {
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(event.target.files[0]);
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'contain';
-        img.onload = function() {
-            URL.revokeObjectURL(img.src);
-        }
-        document.body.innerHTML = '';
-        document.body.appendChild(img);
+    input.addEventListener('change', function (event) {
+        if (event.target.files && event.target.files[0]) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(event.target.files[0]);
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'contain';
+            img.onload = function () {
+                URL.revokeObjectURL(img.src);
+            };
+            document.body.innerHTML = '';
+            document.body.appendChild(img);
 
-        // Esperar o carregamento do Typebot
-        const waitForTypebot = setInterval(() => {
-            if (window.Typebot && typeof window.Typebot.postMessage === 'function') {
-                clearInterval(waitForTypebot); // Interromper o loop
-                window.Typebot.postMessage(); // Emitir o evento
-            } else {
-                console.log("Aguardando Typebot...");
-            }
-        }, 100); // Verifica a cada 100ms
-    }
-});
+            // Esperar o carregamento do Typebot
+            const waitForTypebot = setInterval(() => {
+                if (window.Typebot && typeof window.Typebot.postMessage === 'function') {
+                    clearInterval(waitForTypebot); // Interromper o loop
+
+                    // Emitir o evento com nome e valor
+                    window.Typebot.postMessage({
+                        eventName: "photo_uploaded", // Nome do evento configurado no Typebot
+                        eventData: { status: "success", timestamp: Date.now() }, // Dados opcionais
+                    });
+                    console.log("Evento enviado ao Typebot!");
+                } else {
+                    console.log("Aguardando Typebot...");
+                }
+            }, 100); // Verifica a cada 100ms
+        }
+    });
 });
 </script>
