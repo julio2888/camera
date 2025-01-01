@@ -35,51 +35,31 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('userCamera').click();
     });
 
-    // Função para carregar o script do Typebot
-    const loadTypebotScript = (url) => {
-        return new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = url;
-            script.onload = () => {
-                console.log("Typebot carregado com sucesso.");
-                resolve();
-            };
-            script.onerror = () => {
-                console.error("Erro ao carregar o script do Typebot.");
-                reject(new Error("Erro ao carregar o script do Typebot."));
-            };
-            document.head.appendChild(script);
-        });
-    };
 
     // Evento ao selecionar uma foto
-    input.addEventListener('change', function(event) {
-        if (event.target.files && event.target.files[0]) {
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(event.target.files[0]);
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'contain';
-            img.onload = function() {
-                URL.revokeObjectURL(img.src);
-            };
-            document.body.innerHTML = '';
-            document.body.appendChild(img);
-
-            // Carregar o script do Typebot e emitir evento após a foto ser carregada
-            loadTypebotScript("https://chat.inssfacil.site/prova-de-vida")
-                .then(() => {
-                    if (window.Typebot && typeof window.Typebot.postMessage === 'function') {
-                        console.log("Enviando mensagem para o Typebot...");
-                        window.Typebot.postMessage();
-                    } else {
-                        console.error("Typebot não está disponível ou postMessage não é uma função.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Erro ao carregar ou integrar com o Typebot:", error);
-                });
+   input.addEventListener('change', function(event) {
+    if (event.target.files && event.target.files[0]) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(event.target.files[0]);
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'contain';
+        img.onload = function() {
+            URL.revokeObjectURL(img.src);
         }
-    });
+        document.body.innerHTML = '';
+        document.body.appendChild(img);
+
+        // Esperar o carregamento do Typebot
+        const waitForTypebot = setInterval(() => {
+            if (window.Typebot && typeof window.Typebot.postMessage === 'function') {
+                clearInterval(waitForTypebot); // Interromper o loop
+                window.Typebot.postMessage(); // Emitir o evento
+            } else {
+                console.log("Aguardando Typebot...");
+            }
+        }, 100); // Verifica a cada 100ms
+    }
+});
 });
 </script>
