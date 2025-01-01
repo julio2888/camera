@@ -1,70 +1,57 @@
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Configurar estilos básicos
-    document.body.style.margin = '0';
-    document.body.style.padding = '0';
-    document.body.style.overflow = 'hidden';
-    document.body.style.display = 'flex';
-    document.body.style.justifyContent = 'center';
-    document.body.style.alignItems = 'center';
-    document.body.style.height = '100vh';
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.style.margin = '0';
+        document.body.style.padding = '0';
+        document.body.style.overflow = 'hidden';
+        document.body.style.display = 'flex';
+        document.body.style.justifyContent = 'center';
+        document.body.style.alignItems = 'center';
+        document.body.style.height = '100vh';
 
-    // Criar botão e input para capturar foto
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.capture = 'user';
-    input.id = 'userCamera';
-    input.style.display = 'none';
-    document.body.appendChild(input);
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.capture = 'user';
+        input.id = 'userCamera';
+        input.style.display = 'none';
+        document.body.appendChild(input);
 
-    const button = document.createElement('button');
-    button.id = 'openCameraButton';
-    button.innerText = 'Abrir câmera frontal';
-    button.style.backgroundColor = 'blue';
-    button.style.color = 'white';
-    button.style.border = 'none';
-    button.style.padding = '10px 20px';
-    button.style.fontSize = '16px';
-    button.style.cursor = 'pointer';
-    button.style.borderRadius = '5px';
-    document.body.appendChild(button);
+        const button = document.createElement('button');
+        button.id = 'openCameraButton';
+        button.innerText = 'Open Front Camera';
+        button.style.backgroundColor = 'blue';
+        button.style.color = 'white';
+        button.style.border = 'none';
+        button.style.padding = '10px 20px';
+        button.style.fontSize = '16px';
+        button.style.cursor = 'pointer';
+        button.style.borderRadius = '5px';
+        document.body.appendChild(button);
 
-    // Ação ao clicar no botão
-    document.getElementById('openCameraButton').addEventListener('click', function () {
-        document.getElementById('userCamera').click();
-    });
+        document.getElementById('openCameraButton').addEventListener('click', function() {
+            document.getElementById('userCamera').click();
+        });
 
-    // Evento ao selecionar uma foto
-    input.addEventListener('change', function (event) {
-        if (event.target.files && event.target.files[0]) {
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(event.target.files[0]);
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'contain';
-            img.onload = function () {
-                URL.revokeObjectURL(img.src);
-            };
-            document.body.innerHTML = '';
-            document.body.appendChild(img);
-
-            // Esperar o carregamento do Typebot
-            const waitForTypebot = setInterval(() => {
-                if (window.Typebot && typeof window.Typebot.postMessage === 'function') {
-                    clearInterval(waitForTypebot); // Interromper o loop
-
-                    // Emitir o evento com nome e valor
-                    window.Typebot.postMessage({
-                        eventName: "photo_uploaded", // Nome do evento configurado no Typebot
-                        eventData: { status: "success", timestamp: Date.now() }, // Dados opcionais
-                    });
-                    console.log("Evento enviado ao Typebot!");
-                } else {
-                    console.log("Aguardando Typebot...");
+        input.addEventListener('change', function(event) {
+            if (event.target.files && event.target.files[0]) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(event.target.files[0]);
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'contain';
+                img.onload = function() {
+                    URL.revokeObjectURL(img.src);
                 }
-            }, 100); // Verifica a cada 100ms
-        }
+                document.body.innerHTML = '';
+                document.body.appendChild(img);
+
+                // Emitir evento após carregar a foto
+                window.parent.postMessage(
+  { name: 'My event', data: 'Custom data passed to the typebot variable' },
+  '*'
+)
+
+            }
+        });
     });
-});
-</script>
+    </script>
